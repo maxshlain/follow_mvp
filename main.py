@@ -35,7 +35,17 @@ def main():
     tray_icon.setContextMenu(menu)
     tray_icon.show()
 
+   # Connect to the clipboard's dataChanged signal
+    clipboard = app.clipboard()
+    clipboard.dataChanged.connect(on_clipboard_change)
+
     sys.exit(app.exec())
+
+def on_clipboard_change():
+    clipboard = QApplication.clipboard()
+    if clipboard.mimeData().hasText():
+        text = clipboard.text()
+        print(f"Clipboard changed: {text}")
 
 def open_triggered():
     print("Open clicked")
