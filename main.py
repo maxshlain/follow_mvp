@@ -1,6 +1,7 @@
 import sys
 from PySide6.QtWidgets import QApplication, QSystemTrayIcon, QMenu
 from PySide6.QtGui import QIcon, QAction
+from ClibboardWatcher import ClipboardWatcher
 
 def main():
     app = QApplication(sys.argv)
@@ -35,17 +36,29 @@ def main():
     tray_icon.setContextMenu(menu)
     tray_icon.show()
 
-   # Connect to the clipboard's dataChanged signal
-    clipboard = app.clipboard()
-    clipboard.dataChanged.connect(on_clipboard_change)
+    watcher = define_watcher()
 
     sys.exit(app.exec())
 
-def on_clipboard_change():
+def define_watcher():
+    if sys.platform == "darwin":
+        return ClipboardWatcher(on_clipboard_change_mac)
+    else:
+        clipboard = app.clipboard()
+        clipboard.dataChanged.connect(on_clipboard_change)
+        return None
+
+def on_clipboard_change_win(content):
     clipboard = QApplication.clipboard()
     if clipboard.mimeData().hasText():
         text = clipboard.text()
-        print(f"Clipboard changed: {text}")
+        on_clipboard_change(text)
+
+def on_clipboard_change_mac(content):
+    on_clipboard_change(content)
+
+def on_clipboard_change(content):
+    print(f"Clipboard changed: {content}")
 
 def open_triggered():
     print("Open clicked")
