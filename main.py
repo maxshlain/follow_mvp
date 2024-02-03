@@ -2,6 +2,7 @@ import sys
 from PySide6.QtWidgets import QApplication, QSystemTrayIcon, QMenu
 from PySide6.QtGui import QIcon, QAction
 from ClibboardWatcher import ClipboardWatcher
+from notifypy import Notify
 
 def main():
     app = QApplication(sys.argv)
@@ -59,6 +60,10 @@ def on_clipboard_change_mac(content):
 
 def on_clipboard_change(content):
     print(f"Clipboard changed: {content}")
+    notification = Notify()
+    notification.title = " "
+    notification.message = content
+    notification.send()
 
 def open_triggered():
     print("Open clicked")
